@@ -1,3 +1,7 @@
 .main_menu {
     -fx-background-image: url('../images/MainMenuBackground.jpg');
 }
+
+.gameplay{
+    -fx-background-image: url('../images/GameplayBackground.png');
+}
