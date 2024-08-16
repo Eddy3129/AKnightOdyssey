@@ -1,4 +1,3 @@
 .main_menu {
-    -fx-background-image: url('../images/GameMenuBackground.jpg');
-    -fx-background-size: cover;
+    -fx-background-image: url('../images/MainMenuBackground.jpg');
 }
