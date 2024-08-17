@@ -1,15 +1,15 @@
 package aknightodyssey.controllers
 
-import aknightodyssey.game.{GameLogic, MonsterTile, NormalTile, PowerUpTile, SpecialEncounterTile, Tiles}
+import aknightodyssey.game.{GameLogic, Tiles}
 import scalafx.scene.Scene
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.{GridPane, StackPane}
 import scalafxml.core.macros.sfxml
 import scalafx.scene.image.{Image, ImageView}
-import scalafx.stage.{Modality, Stage}
+import scalafx.stage.{Modality, Stage, StageStyle}
 import scalafxml.core.{FXMLLoader, NoDependencyResolver}
+import scalafx.scene.media.{Media, MediaPlayer}
 import scalafx.Includes._
-
 
 @sfxml
 class GameplayController(
@@ -17,7 +17,6 @@ class GameplayController(
                           private val messageLabel: Label,
                           private val positionLabel: Label,
                           private val gameBoard: GridPane
-
                         ) {
   private var gameLogic: GameLogic = _
   private val boardSize = 30
@@ -36,20 +35,13 @@ class GameplayController(
     messageLabel.text = s"Rolled $roll. $message"
     updateUI()
 
-    val encounterText = message match {
-      case msg if msg.contains("monster") => "You encountered a monster!"
-      case msg if msg.contains("power-up") => "You found a power-up!"
-      case msg if msg.contains("special encounter") => "You've experienced a special encounter!"
-      case _ => "Something happened!"
-    }
-
-    if (message.contains("monster") || message.contains("power-up") || message.contains("special encounter")) {
-      openEncounterWindow("aknightodyssey/images/knight_run.jpeg", encounterText)
+    gameLogic.getEncounterDetails.foreach { case (imagePath, musicPath, encounterText) =>
+      openEncounterWindow(imagePath, encounterText, musicPath)
     }
 
     if (gameLogic.isGameOver) {
-      rollButton.disable = true
       messageLabel.text = "Congratulations! You've reached the end of the game."
+      rollButton.disable = true
     }
   }
 
@@ -62,7 +54,6 @@ class GameplayController(
     val stoneTileImage = new Image("aknightodyssey/images/StoneTile.png")
 
     for (i <- 0 until boardSize) {
-      val tile = createTile(i + 1)
       val imageView = new ImageView(stoneTileImage) {
         fitWidth = tileSize
         fitHeight = tileSize
@@ -75,7 +66,6 @@ class GameplayController(
         children = List(imageView, label)
       }
 
-      // Calculate row and column for snake-like pattern
       val row = 4 - (i / 6)
       val col = if (row % 2 == 0) i % 6 else 5 - (i % 6)
 
@@ -102,16 +92,7 @@ class GameplayController(
     gameBoard.add(playerToken, col, row)
   }
 
-  private def createTile(number: Int): Tiles = {
-    number match {
-      case n if n % 10 == 0 => new MonsterTile
-      case n if n % 7 == 0 => new PowerUpTile
-      case n if n % 5 == 0 => new SpecialEncounterTile
-      case _ => new NormalTile
-    }
-  }
-
-  private def openEncounterWindow(imagePath: String, text: String): Unit = {
+  private def openEncounterWindow(imagePath: String, text: String, musicPath: String): Unit = {
     val resource = getClass.getResource("/aknightodyssey/view/Encounter.fxml")
     val loader = new FXMLLoader(resource, NoDependencyResolver)
     loader.load()
@@ -120,11 +101,21 @@ class GameplayController(
 
     val stage = new Stage() {
       initModality(Modality.ApplicationModal)
+      initStyle(StageStyle.Undecorated)
       scene = new Scene(root)
+    }
+    stage.setMaximized(true)
+
+    val mediaResource = getClass.getResource(musicPath)
+    if (mediaResource != null) {
+      val media = new Media(mediaResource.toString)
+      val mediaPlayer = new MediaPlayer(media)
+      mediaPlayer.play()
+
+      stage.onCloseRequest = _ => mediaPlayer.stop()
     }
 
     controller.initData(imagePath, text)
     stage.show()
   }
-
 }

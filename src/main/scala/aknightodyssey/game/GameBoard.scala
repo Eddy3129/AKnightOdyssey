@@ -23,4 +23,7 @@ class GameBoard {
     player.move(roll)
     (roll, gameBoard(player.position).encounter(player))
   }
+
+  // New method to get the current tile
+  def getCurrentTile: Tiles = gameBoard(player.position)
 }
