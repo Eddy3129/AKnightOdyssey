@@ -14,6 +14,12 @@ lazy val root = (project in file("."))
 
       "org.scalafx" %% "scalafxml-core-sfx8" % "0.5",
 
+      "org.apache.derby" % "derby" % "10.12.1.1",
+
+      "org.scalikejdbc" %% "scalikejdbc" % "4.3.0",
+
+      "com.h2database"  %  "h2" % "2.2.224",
+
     )
 
   )

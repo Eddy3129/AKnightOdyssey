@@ -5,3 +5,11 @@
 .gameplay{
     -fx-background-image: url('../images/GameplayBackground.png');
 }
+
+.leaderboard{
+    -fx-background-image: url('../images/LeaderboardBackground.png');
+}
+
+.setName{
+    -fx-background-image: url('../images/SetNameBackground.png');
+}

@@ -1,6 +1,8 @@
 package aknightodyssey.controllers
 
 import aknightodyssey.game.{GameLogic, Tiles}
+import aknightodyssey.{MainApp, model}
+import aknightodyssey.model.Leaderboard
 import scalafx.scene.Scene
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.{GridPane, StackPane}
@@ -22,8 +24,11 @@ class GameplayController(
   private val boardSize = 30
   private val tileSize = 75
   private var playerToken: ImageView = _
+  private var turnCount: Int = 0
+  private var playerName: String = _
 
-  def initializeGame(): Unit = {
+  def initializeGame(playerName: String): Unit = {
+    this.playerName = playerName
     gameLogic = new GameLogic()
     createGameBoard()
     createPlayerToken()
@@ -33,6 +38,7 @@ class GameplayController(
   def rollDice(): Unit = {
     val (roll, message) = gameLogic.rollDiceAndMove()
     messageLabel.text = s"Rolled $roll. $message"
+    turnCount += 1
     updateUI()
 
     gameLogic.getEncounterDetails.foreach { case (imagePath, musicPath, encounterText) =>
@@ -40,8 +46,10 @@ class GameplayController(
     }
 
     if (gameLogic.isGameOver) {
-      messageLabel.text = "Congratulations! You've reached the end of the game."
+      messageLabel.text = s"Congratulations! You've reached the end of the game."
       rollButton.disable = true
+      savePlayerScore()
+      MainApp.showGameOverlay(playerName, turnCount)
     }
   }
 
@@ -117,5 +125,11 @@ class GameplayController(
 
     controller.initData(imagePath, text)
     stage.show()
+
   }
+
+  private def savePlayerScore(): Unit = {
+    Leaderboard.addScore(playerName, turnCount)
+  }
+
 }

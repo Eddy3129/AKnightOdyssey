@@ -5,7 +5,10 @@ import scalafxml.core.macros.sfxml
 
 @sfxml
 class GameHomePageController {
-  def handleStart(action: ActionEvent): Unit = {
-    aknightodyssey.MainApp.showGameplay()
+  def handleName(action: ActionEvent): Unit = {
+    aknightodyssey.MainApp.showSetName()
+  }
+  def handleLeaderboard(action: ActionEvent): Unit = {
+    aknightodyssey.MainApp.showLeaderboard()
   }
 }

@@ -10,7 +10,7 @@ class GameBoard {
   val player = new Player(0, this)
 
   val gameBoard: Array[Tiles] = Array.fill(TOTAL_TILES) {
-    Random.nextInt(4) match {
+    Random.nextInt(7) match {
       case 0 => new PowerUpTile
       case 1 => new MonsterTile
       case 2 => new SpecialEncounterTile
