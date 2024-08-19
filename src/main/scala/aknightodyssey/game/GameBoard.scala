@@ -1,16 +1,14 @@
 package aknightodyssey.game
 
+import aknightodyssey.game.Tile
 import scala.util.Random
 
-class GameBoard {
-  val ROWS = 6
-  val COLUMNS = 5
-  val TOTAL_TILES: Int = ROWS * COLUMNS
+class GameBoard(val size: Int = 30) {
+  private val random = new Random()
 
-  val player = new Player(0, this)
-
-  val gameBoard: Array[Tiles] = Array.fill(TOTAL_TILES) {
-    Random.nextInt(7) match {
+  // Initialize the board with random tiles
+  val tiles: Array[Tile] = Array.fill(size) {
+    random.nextInt(4) match {
       case 0 => new PowerUpTile
       case 1 => new MonsterTile
       case 2 => new SpecialEncounterTile
@@ -18,12 +16,7 @@ class GameBoard {
     }
   }
 
-  def rollDiceAndMove(): (Int, String) = {
-    val roll = Random.nextInt(6) + 1
-    player.move(roll)
-    (roll, gameBoard(player.position).encounter(player))
+  def getTileAt(position: Int): Tile = {
+    if (position >= 0 && position < size) tiles(position) else new NormalTile
   }
-
-  // New method to get the current tile
-  def getCurrentTile: Tiles = gameBoard(player.position)
 }

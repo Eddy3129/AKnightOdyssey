@@ -1,29 +1,37 @@
 package aknightodyssey.game
 
-class GameLogic {
-  val gameBoard = new GameBoard()
-  val player = gameBoard.player
+import scala.util.Random
+
+class GameLogic(val player: Player, val gameBoard: GameBoard) {
+  private val random = new Random()
 
   def rollDiceAndMove(): (Int, String) = {
-    gameBoard.rollDiceAndMove()
+    val roll = if (player.isDebuffed) random.nextInt(3) + 1 else random.nextInt(6) + 1
+    player.move(roll)
+    player.decrementDebuff()
+    ensureValidPosition()
+    (roll, getCurrentTileMessage)
   }
 
-  def isGameOver: Boolean = {
-    player.position == gameBoard.TOTAL_TILES - 1
-  }
+  def getCurrentPosition: Int = player.position
 
-  def getCurrentPosition: Int = {
-    player.position + 1
-  }
+  def isGameOver: Boolean = player.position == gameBoard.size - 1
 
   def getEncounterDetails: Option[(String, String, String)] = {
-    val tile = gameBoard.getCurrentTile
-    tile match {
-      case _: MonsterTile => Some(("/aknightodyssey/images/Monster.jpg", "/aknightodyssey/sounds/monster_scream.wav", tile.encounter(player)))
-      case _: PowerUpTile => Some(("/aknightodyssey/images/Power-up.jpg", "/aknightodyssey/sounds/horse_neigh.mp3", tile.encounter(player)))
-      case _: SpecialEncounterTile => Some(("/aknightodyssey/images/Special-Encounter.jpg", "/aknightodyssey/sounds/special.mp3", tile.encounter(player)))
-      case _ => None
+    getCurrentTile.getEncounterDetails
+  }
+
+  def getCurrentTile: Tile = {
+    gameBoard.getTileAt(player.position)
+  }
+
+  private def ensureValidPosition(): Unit = {
+    if (player.position >= gameBoard.size) {
+      player.position = gameBoard.size - 1
     }
   }
 
+  private def getCurrentTileMessage: String = {
+    getCurrentTile.getMessage
+  }
 }

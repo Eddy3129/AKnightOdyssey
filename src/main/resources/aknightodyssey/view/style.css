@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
+
 .main_menu {
     -fx-background-image: url('../images/GameMenuBackground.jpg');
 }
@@ -12,4 +14,14 @@
 
 .setName{
     -fx-background-image: url('../images/SetNameBackground.png');
+}
+
+.pixelify-sans-text {
+    -fx-font-family: "Pixelify Sans", sans-serif;
+    -fx-font-size: 40px;
+}
+
+.pixelify-sans-small-text {
+    -fx-font-family: "Pixelify Sans", sans-serif;
+    -fx-font-size: 20px;
 }

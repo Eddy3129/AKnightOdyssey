@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="aknightodyssey.controllers.LuckyWheelController">
+   <children>
+      <ImageView fx:id="luckyWheel" fitHeight="795.0" fitWidth="789.0" layoutX="563.0" layoutY="177.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="563.0" AnchorPane.rightAnchor="568.0">
+         <image>
+            <Image url="@../images/Lucky_Wheel.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="pointer" fitHeight="150.0" fitWidth="200.0" layoutX="886.0" layoutY="165.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/Pointer.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="spinMessage" layoutX="708.0" layoutY="62.0" stylesheets="@style.css" text="Spin the Wheel!">
+         <font>
+            <Font size="70.0" />
+         </font>
+      </Label>
+      <Button fx:id="spinButton" layoutX="878.0" layoutY="930.0" mnemonicParsing="false" onAction="#spinWheel" styleClass="pixelify-sans-text" stylesheets="@style.css" text="Spin!">
+         <font>
+            <Font size="42.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

@@ -9,10 +9,10 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" styleClass="setName" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="aknightodyssey.controllers.SetNameController">
    <center>
-      <TextField fx:id="textField" prefHeight="91.0" prefWidth="920.0" BorderPane.alignment="CENTER" />
+      <TextField fx:id="textField" prefHeight="91.0" prefWidth="920.0" promptText="Type your name here..." styleClass="pixelify-sans-text" BorderPane.alignment="CENTER" />
    </center>
    <bottom>
-      <Button fx:id="submitButton" mnemonicParsing="false" onAction="#handleStart" text="Let the adventure begins!" BorderPane.alignment="CENTER">
+      <Button fx:id="submitButton" defaultButton="true" mnemonicParsing="false" onAction="#handleStart" styleClass="pixelify-sans-text" text="Let the adventure begins!" BorderPane.alignment="CENTER">
          <font>
             <Font size="39.0" />
          </font>

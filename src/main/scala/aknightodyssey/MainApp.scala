@@ -1,10 +1,11 @@
 package aknightodyssey
 
-import aknightodyssey.controllers.{GameOverOverlayController, GameplayController, SetNameController}
+import aknightodyssey.controllers.{GameOverOverlayController, GameplayController, LuckyWheelController, SetNameController}
+import aknightodyssey.game.GameLogic
 import aknightodyssey.util.Database
 import scalafxml.core.{FXMLLoader, NoDependencyResolver}
 import scalafx.Includes._
-import scalafx.application.JFXApp
+import scalafx.application.{JFXApp, Platform}
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
 import javafx.{scene => jfxs}
@@ -57,21 +58,46 @@ object MainApp extends JFXApp {
   }
 
   def showGameOverlay(playerName: String, turnCount: Int): Unit = {
-    val resource = getClass.getResource("view/GameOverOverlay.fxml")
+    Platform.runLater {
+      val resource = getClass.getResource("view/GameOverOverlay.fxml")
+      val loader = new FXMLLoader(resource, NoDependencyResolver)
+      loader.load()
+
+      val root = loader.getRoot[jfxs.Parent]
+      val controller = loader.getController[GameOverOverlayController#Controller]
+      controller.setData(playerName, turnCount)
+
+      val overlayStage = new Stage() {
+        initModality(Modality.ApplicationModal)
+        initStyle(StageStyle.Undecorated)
+        scene = new Scene(root)
+      }
+      overlayStage.showAndWait()
+    }
+  }
+
+
+  // In MainApp object
+  def showLuckyWheel(gameLogic: GameLogic): String = {
+    val resource = getClass.getResource("/aknightodyssey/view/LuckyWheel.fxml")
     val loader = new FXMLLoader(resource, NoDependencyResolver)
     loader.load()
+    val root = loader.getRoot[javafx.scene.Parent]
+    val controller = loader.getController[LuckyWheelController#Controller]
 
-    val root = loader.getRoot[jfxs.Parent]
-    val controller = loader.getController[GameOverOverlayController#Controller]
-    controller.setData(playerName, turnCount)
+    controller.setGameLogic(gameLogic)
 
-    val overlayStage = new Stage() {
+    val stage = new Stage() {
       initModality(Modality.ApplicationModal)
       initStyle(StageStyle.Undecorated)
       scene = new Scene(root)
     }
-    overlayStage.showAndWait()
+    stage.showAndWait()
+
+    controller.getResult
   }
+
+
 
   showMainMenu()
 }

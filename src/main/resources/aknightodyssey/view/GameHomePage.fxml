@@ -25,12 +25,12 @@
                   <Font name="Lucida Handwriting Italic" size="66.0" />
                </font>
             </Text>
-            <Button fx:id="newGameButton" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#handleName" text="New Game" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+            <Button fx:id="newGameButton" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#handleName" styleClass="pixelify-sans-text" text="New Game" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                <font>
                   <Font size="27.0" />
                </font>
             </Button>
-            <Button fx:id="leaderboardButton" mnemonicParsing="false" onAction="#handleLeaderboard" text="Leaderboard" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+            <Button fx:id="leaderboardButton" mnemonicParsing="false" onAction="#handleLeaderboard" styleClass="pixelify-sans-text" text="Leaderboard" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                <font>
                   <Font size="25.0" />
                </font>

@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Tue Aug 20 00:01:14 SGT 2024:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0191-6b5f-034f-000006256070 
+on database directory C:\Users\Eddy\IdeaProjects\finalprojectv2-Eddy3129\myDB with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
+Loaded from file:/C:/Users/Eddy/AppData/Local/Coursier/cache/v1/https/repo1.maven.org/maven2/org/apache/derby/derby/10.12.1.1/derby-10.12.1.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_411-b09
+user.dir=C:\Users\Eddy\IdeaProjects\finalprojectv2-Eddy3129
+os.name=Windows 11
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

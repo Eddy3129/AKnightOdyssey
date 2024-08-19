@@ -43,4 +43,8 @@ object Leaderboard extends Database {
     }
     scores ++= loadedScores
   }
+
+  def clearLeaderboard(): Unit = {
+    scores.clear()
+  }
 }
