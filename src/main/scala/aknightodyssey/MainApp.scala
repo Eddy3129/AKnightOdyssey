@@ -53,7 +53,7 @@ object MainApp extends JFXApp {
   }
 
   def showLeaderboard(): Unit = {
-    val resource = getClass.getResource("view/LeaderboardPage.fxml")
+    val resource = getClass.getResource("view/Leaderboard.fxml")
     val loader = new FXMLLoader(resource, NoDependencyResolver)
     loader.load()
     val root = loader.getRoot[jfxs.Parent]
@@ -80,7 +80,6 @@ object MainApp extends JFXApp {
   }
 
 
-  // In MainApp object
 
   def showLuckyWheel(gameLogic: GameLogic, onResult: String => Unit): Unit = {
     val resource = getClass.getResource("/aknightodyssey/view/LuckyWheel.fxml")

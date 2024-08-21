@@ -1,10 +1,10 @@
 package aknightodyssey.controllers
 
-import aknightodyssey.controllers.EncounterController
-import aknightodyssey.game.{GameBoard, GameLogic, MonsterTile, Player, SpecialEncounterTile}
-import aknightodyssey.{MainApp, model}
+import aknightodyssey.game.{GameBoard, GameLogic, MonsterTile, Player, PowerUpTile, SpecialEncounterTile}
+import aknightodyssey.{MainApp}
 import aknightodyssey.model.Leaderboard
 import aknightodyssey.util.{EffectAnimation, MessageAnimation}
+import javafx.fxml.FXML
 import scalafx.application.Platform
 import scalafx.scene.Scene
 import scalafx.scene.control.{Button, Label}
@@ -21,29 +21,29 @@ import scalafx.Includes._
 
 @sfxml
 class GameplayController(
-                          private val rollButton: Button,
-                          private val messageLabel: Label,
-                          private val effectLabel: Label,
-                          private val messageContainer: Rectangle,
-                          private val positionLabel: Label,
-                          private val gameBoard: GridPane
+                          @FXML private val rollButton: Button,
+                          @FXML private val messageLabel: Label,
+                          @FXML private val effectLabel: Label,
+                          @FXML private val messageContainer: Rectangle,
+                          @FXML private val positionLabel: Label,
+                          @FXML private val gameBoard: GridPane
                         ) {
   private var gameLogic: GameLogic = _
-  private val boardSize = 30
-  private val tileSize = 75
+  private val boardSize:Int = 30
+  private val tileSize:Int = 75
   private var playerToken: ImageView = _
   private var turnCount: Int = 0
   private var playerName: String = _
-  private val messageAnimation = new MessageAnimation(messageLabel, 50)
-  private val effectAnimation = new EffectAnimation(effectLabel, 50)
-  private var luckyWheelSpunThisTurn = false
+  private val messageAnimation: MessageAnimation = new MessageAnimation(messageLabel, 50)
+  private val effectAnimation: EffectAnimation = new EffectAnimation(effectLabel, 50)
+  private var luckyWheelSpunThisTurn: Boolean = false
 
   def initializeGame(playerName: String): Unit = {
     this.playerName = playerName
     gameLogic = new GameLogic(new Player(1), new GameBoard())
     createGameBoard()
     createPlayerToken()
-    updateUI()
+    updatePlayerTokenPosition()
   }
 
   def rollDice(): Unit = {
@@ -87,12 +87,12 @@ class GameplayController(
 
     // Determine the correct image, sound, and text based on whether the player has a power boost
     val (imagePath, musicPath, encounterText) = if (hasPowerBoost) {
-      ("/aknightodyssey/images/Monster_Sword.png",
-        "/aknightodyssey/sounds/monster_sword.wav",
+      ("/aknightodyssey/images/Gameplay-Monster-Encounter-PlayerBoost.png",
+        "/aknightodyssey/sounds/Gameplay_Monster-Encounter-PlayerBoost.wav",
         "You have defeated the Goblin with the Mighty Gold Sword!")
     } else {
-      encounterDetails.getOrElse(("/aknightodyssey/images/Monster.jpg",
-        "/aknightodyssey/sounds/monster_scream.wav",
+      encounterDetails.getOrElse(("/aknightodyssey/images/Gameplay-Monster-Encounter.jpg",
+        "/aknightodyssey/sounds/Gameplay-Monster-Encounter.wav",
         "You have encountered the Goblin Monster"))
     }
 
@@ -197,7 +197,6 @@ class GameplayController(
         new PauseTransition(Duration(500)) {
           onFinished = _ => {
             effectAnimation.play(List(effectMessage)) {
-              updateUI()
               rollButton.disable = false // Enable the button after effects
               onClose()
             }
@@ -212,15 +211,32 @@ class GameplayController(
   }
 
 
-  private def updateUI(): Unit = {
-    positionLabel.text = s"Current Position: ${gameLogic.getCurrentPosition}"
-    updatePlayerTokenPosition()
-  }
-
   private def createGameBoard(): Unit = {
-    val stoneTileImage = new Image("aknightodyssey/images/StoneTile.png")
+    val stoneTileImage = new Image("aknightodyssey/images/Gameplay-Tile-Block.png")
+    val monsterIcon = new Image("aknightodyssey/images/Gameplay-Monster-Icon.jpeg")
+    val powerUpIcon = new Image("aknightodyssey/images/Gameplay-Power-Up-Icon.jpeg")
+    val specialEncounterIcon = new Image("aknightodyssey/images/Gameplay-Special-Icon.jpeg")
+    val trophyIcon = new Image("aknightodyssey/images/Gameplay-Trophy-Icon.jpeg")  // Add this line
 
     for (i <- 0 until boardSize) {
+      val tile = gameLogic.gameBoard.getTileAt(i + 1)
+
+      val tileIcon = if (i == boardSize - 1) {
+        new ImageView(trophyIcon)  // Use trophy icon for the last tile
+      } else {
+        tile match {
+          case _: MonsterTile => new ImageView(monsterIcon)
+          case _: PowerUpTile => new ImageView(powerUpIcon)
+          case _: SpecialEncounterTile => new ImageView(specialEncounterIcon)
+          case _ => null
+        }
+      }
+
+      if (tileIcon != null) {
+        tileIcon.fitWidth = tileSize
+        tileIcon.fitHeight = tileSize
+      }
+
       val tilePane = new StackPane {
         children = List(
           new ImageView(stoneTileImage) {
@@ -230,7 +246,7 @@ class GameplayController(
           new Label((i + 1).toString) {
             style = "-fx-font-size: 40px; -fx-text-fill: white; -fx-font-weight: bold;"
           }
-        )
+        ) ++ Option(tileIcon).toList
       }
 
       val row = 4 - (i / 6)
@@ -241,7 +257,7 @@ class GameplayController(
   }
 
   private def createPlayerToken(): Unit = {
-    playerToken = new ImageView(new Image("aknightodyssey/images/Knight.png")) {
+    playerToken = new ImageView(new Image("aknightodyssey/images/Gameplay-Player-Token.png")) {
       fitWidth = 150
       fitHeight = 150
     }
@@ -249,6 +265,7 @@ class GameplayController(
   }
 
   private def updatePlayerTokenPosition(): Unit = {
+    positionLabel.text = s"Current Position: ${gameLogic.getCurrentPosition}"
     println(s"Updating player token position to ${gameLogic.getCurrentPosition}")
     val position = Math.min(gameLogic.getCurrentPosition - 1, boardSize - 1)
     if (position >= 0 && position < boardSize) {
@@ -268,9 +285,9 @@ class GameplayController(
     savePlayerScore()
 
     openEncounterWindow(
-      "/aknightodyssey/images/Victory.png",
+      "/aknightodyssey/images/Gameplay-Victory-Endscreen.png",
       s"Congratulations, $playerName! You've completed your journey in $turnCount turns.",
-      "/aknightodyssey/sounds/success.wav",
+      "/aknightodyssey/sounds/Gameplay-Endscreen-BGM.wav",
       false,
       () => {
         Platform.runLater {

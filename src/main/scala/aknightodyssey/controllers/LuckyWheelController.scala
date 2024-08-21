@@ -1,19 +1,21 @@
 package aknightodyssey.controllers
 
 import aknightodyssey.game.GameLogic
+import javafx.fxml.FXML
 import scalafx.animation.{Interpolator, KeyFrame, RotateTransition, Timeline}
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.image.ImageView
 import scalafx.util.Duration
 import scalafxml.core.macros.sfxml
+
 import scala.util.Random
 import scalafx.application.Platform
 
 @sfxml
 class LuckyWheelController(
-                            private val luckyWheel: ImageView,
-                            private val spinButton: Button,
-                            private val spinMessage: Label
+                            @FXML private val luckyWheel: ImageView,
+                            @FXML private val spinButton: Button,
+                            @FXML private val spinMessage: Label
                           ) {
   private var gameLogic: GameLogic = _
   private var resultCallback: String => Unit = _

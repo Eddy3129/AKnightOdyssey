@@ -1,8 +1,10 @@
 package aknightodyssey.model
 
-import scalafx.collections.ObservableBuffer
 import aknightodyssey.util.Database
+import scalafx.collections.ObservableBuffer
 import scalikejdbc._
+
+import scala.util.{Failure, Success, Try}
 
 object Leaderboard extends Database {
   val scores: ObservableBuffer[(String, Int)] = ObservableBuffer.empty[(String, Int)]
@@ -16,14 +18,14 @@ object Leaderboard extends Database {
           turnCount int
         )
       """.execute.apply()
-    }
+    }L
   }
 
   def addScore(playerName: String, turnCount: Int): Unit = {
     DB autoCommit { implicit session =>
       sql"""
-        insert into Leaderboard (playerName, turnCount)
-        values (${playerName}, ${turnCount})
+        INSERT INTO Leaderboard (playerName, turnCount)
+        VALUES (${playerName}, ${turnCount})
       """.update.apply()
     }
     loadScoresFromDB()
@@ -37,14 +39,27 @@ object Leaderboard extends Database {
   private def loadScoresFromDB(): Unit = {
     scores.clear()
     val loadedScores = DB readOnly { implicit session =>
-      sql"select playerName, turnCount from Leaderboard order by turnCount asc"
+      sql"""
+      SELECT playerName, turnCount
+      FROM Leaderboard
+      ORDER BY turnCount ASC
+    """
         .map(rs => (rs.string("playerName"), rs.int("turnCount")))
         .list.apply()
     }
     scores ++= loadedScores
   }
 
-  def clearLeaderboard(): Unit = {
-    scores.clear()
+  def deleteScore(playerName: String, turnCount: Int): Try[Int] = {
+    Try(DB autoCommit { implicit session =>
+      sql"""
+        DELETE FROM Leaderboard
+        WHERE playerName = $playerName AND turnCount = $turnCount
+      """.update.apply()
+    }).map { result =>
+      loadScoresFromDB()
+      result
+    }
   }
+
 }

@@ -1,32 +1,214 @@
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
 
-.main_menu {
-    -fx-background-image: url('../images/GameMenuBackground.png');
+/*General Use*/
+.normal-button {
+    -fx-background-color: rgba(139, 69, 19, 0.8);
+    -fx-text-fill: #FFD700;
+    -fx-font-family: "Pixelify Sans", sans-serif;
+    -fx-font-size: 50px;
+    -fx-padding: 15 30;
+    -fx-background-radius: 10;
+    -fx-border-color: #FFD700;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0, 0, 2);
 }
 
-.gameplay{
-    -fx-background-image: url('../images/GameplayBackground.png');
+.normal-button:hover {
+    -fx-background-color: rgba(205, 133, 63, 0.8);
+    -fx-border-color: rgba(160, 82, 45, 0.8);
+    -fx-text-fill: rgba(160, 82, 45, 0.8);
+    -fx-cursor: hand;
 }
 
-.leaderboard{
-    -fx-background-image: url('../images/LeaderboardBackground.png');
+.normal-button:pressed {
+    -fx-background-color: rgba(160, 82, 45, 0.8);
 }
 
-.setName{
-    -fx-background-image: url('../images/SetNameBackground.png');
+.small-button {
+    -fx-background-color: rgba(139, 69, 19, 0.8);
+    -fx-text-fill: #FFD700;
+    -fx-font-family: "Pixelify Sans", sans-serif;
+    -fx-font-size: 30px;
+    -fx-background-radius: 10;
+    -fx-border-color: #FFD700;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0, 0, 2);
 }
 
-.pixelify-sans-text {
+.small-button:hover {
+    -fx-background-color: rgba(205, 133, 63, 0.8);
+    -fx-border-color: rgba(160, 82, 45, 0.8);
+    -fx-text-fill: rgba(160, 82, 45, 0.8);
+    -fx-cursor: hand;
+}
+
+.small-button:pressed {
+    -fx-background-color: rgba(160, 82, 45, 0.8);
+}
+
+.gameText-normal {
     -fx-font-family: "Pixelify Sans", sans-serif;
     -fx-font-size: 40px;
 }
 
-.pixelify-sans-small-text {
+.gameText-small {
     -fx-font-family: "Pixelify Sans", sans-serif;
     -fx-font-size: 20px;
 }
 
-.pixelify-sans-large-text {
+.gameText-large {
     -fx-font-family: "Pixelify Sans", sans-serif;
     -fx-font-size: 50px;
 }
+
+/*GameHomePage*/
+.gameHomePage-background {
+    -fx-background-image: url('../images/GameMenuBackground.png');
+}
+
+.gameHomePage-title {
+    -fx-font-family: "MedievalSharp", cursive;
+    -fx-font-size: 150px;
+    -fx-fill: #FFD700;
+    -fx-stroke: #8B4513;
+    -fx-stroke-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+/*Gameplay*/
+
+.gameplay-background{
+    -fx-background-image: url('../images/GameplayBackground.png');
+}
+
+/*setName*/
+.setName-background{
+    -fx-background-image: url('../images/SetNameBackground.png');
+}
+
+
+/*LuckyWheel*/
+.luckyWheel-background{
+    -fx-background-image: url('../images/LuckyWheelBackground.png');
+}
+
+.luckyWheel-spinMessage {
+    -fx-font-family: "MedievalSharp", cursive;
+    -fx-font-size: 100px;
+    -fx-fill: #FFD700;
+    -fx-stroke: #8B4513;
+    -fx-stroke-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+/*Leaderboard*/
+
+.leaderboard-background{
+    -fx-background-image: url('../images/LeaderboardBackground.png');
+}
+
+.leaderboard-header {
+    -fx-font-family: "MedievalSharp", cursive;
+    -fx-font-size: 80px;
+    -fx-fill: #FFD700;
+    -fx-stroke: #8B4513;
+    -fx-stroke-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 5);
+}
+
+
+label {
+    -fx-text-fill: #FFD700;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 5, 0, 0, 1);
+}
+
+/* Table Styles */
+.table-view {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-background-radius: 15;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 5);
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #8B4513;
+    -fx-background-radius: 15 15 0 0;
+    -fx-padding: 5 0 5 0;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 40;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #FFD700;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #FFD700;
+    -fx-font-family: "Pixelify Sans", sans-serif;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+/* Filled Rows */
+.table-row-cell:filled {
+    -fx-background-color: rgba(255, 215, 0, 0.3);
+    -fx-font-family: "Pixelify Sans", sans-serif;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 30px;
+}
+
+.table-row-cell:filled:odd {
+    -fx-background-color: rgba(255, 215, 0, 0.4);
+}
+
+/* Unfilled Rows */
+.table-row-cell:empty {
+    -fx-background-color: rgba(50, 50, 50, 0.7);
+}
+
+.table-row-cell:empty:odd {
+    -fx-background-color: rgba(70, 70, 70, 0.7);
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #FFD700;
+    -fx-text-fill: #000000;
+}
+
+.table-view .table-cell {
+    -fx-border-color: transparent;
+    -fx-padding: 2 0 2 10px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+/* Scrollbar Styles */
+.table-view .scroll-bar:vertical,
+.table-view .scroll-bar:horizontal {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+}
+
+.table-view .scroll-bar:vertical .thumb,
+.table-view .scroll-bar:horizontal .thumb {
+    -fx-background-color: #FFD700;
+}
+
+#leaderboard-backButton {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 10, 0, 0, 5);
+}
+
+#leaderboard-backButton:hover {
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.8), 15, 0, 0, 7);
+}
+
+
+
+
+
+
+

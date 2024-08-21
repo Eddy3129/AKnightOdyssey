@@ -1,5 +1,6 @@
 package aknightodyssey.controllers
 
+import javafx.fxml.FXML
 import scalafx.scene.image.{Image, ImageView}
 import scalafxml.core.macros.sfxml
 import scalafx.scene.text.Text
@@ -9,8 +10,8 @@ import scalafx.Includes._
 
 @sfxml
 class EncounterController(
-                           private val backgroundImage: ImageView,
-                           private val encounterText: Text
+                           @FXML private val backgroundImage: ImageView,
+                           @FXML private val encounterText: Text
                          ) {
 
   def initData(imagePath: String, text: String): Unit = {

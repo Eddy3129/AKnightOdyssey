@@ -16,7 +16,7 @@ abstract class LabelAnimation[T <: Label](protected val label: T, protected val 
     label.visible = true
     label.opacity = 1.0
 
-    val typingSound = new AudioClip(getClass.getResource("/aknightodyssey/sounds/digital_typing.wav").toString)
+    val typingSound = new AudioClip(getClass.getResource("/aknightodyssey/sounds/Gameplay-Effect-Typing.wav").toString)
 
     def animateNextText(remainingTexts: List[String]): Unit = {
       remainingTexts match {

@@ -26,10 +26,6 @@ class Player(var position: Int) {
     if (debuffTurns > 0) debuffTurns -= 1
   }
 
-  def getDebuffTurns():Int = {
-    return debuffTurns
-  }
-
   def resetPowerBoost(): Unit = {
     powerBoost = false
   }

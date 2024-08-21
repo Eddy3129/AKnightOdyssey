@@ -12,15 +12,15 @@ class NormalTile extends Tile {
 
 class MonsterTile extends Tile {
   def getMessage: String = "You landed on a Monster tile."
-  def getEncounterDetails: Option[(String, String, String)] = Some(("/aknightodyssey/images/Monster.jpg", "/aknightodyssey/sounds/monster_scream.wav", "You have encountered the Goblin Monster"))
+  def getEncounterDetails: Option[(String, String, String)] = Some(("/aknightodyssey/images/Gameplay-Monster-Encounter.jpg", "/aknightodyssey/sounds/Gameplay-Monster-Encounter.wav", "You have encountered the Goblin Monster"))
 }
 
 class PowerUpTile extends Tile {
   def getMessage: String = "You landed on a Power Up tile."
-  def getEncounterDetails: Option[(String, String, String)] = Some(("/aknightodyssey/images/Power-up.jpg", "/aknightodyssey/sounds/horse_neigh.mp3", "You have encountered the Magical Unicorn!"))
+  def getEncounterDetails: Option[(String, String, String)] = Some(("/aknightodyssey/images/Gameplay-Power-up-Encounter.jpg", "/aknightodyssey/sounds/Gameplay-Power-up-Encounter.mp3", "You have encountered the Magical Unicorn!"))
 }
 
 class SpecialEncounterTile extends Tile {
   def getMessage: String = "You landed on a special encounter tile."
-  def getEncounterDetails: Option[(String, String, String)] = Some(("/aknightodyssey/images/Special-Encounter.jpg", "/aknightodyssey/sounds/special.mp3","You have discovered a secret treasure chest!"))
+  def getEncounterDetails: Option[(String, String, String)] = Some(("/aknightodyssey/images/Gameplay-Special-Encounter.jpg", "/aknightodyssey/sounds/Gameplay-Special-Encounter.mp3","You have discovered a secret treasure chest!"))
 }
