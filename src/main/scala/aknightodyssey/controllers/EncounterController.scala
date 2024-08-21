@@ -12,6 +12,7 @@ class EncounterController(
                            private val backgroundImage: ImageView,
                            private val encounterText: Text
                          ) {
+
   def initData(imagePath: String, text: String): Unit = {
     if (backgroundImage != null) {
       backgroundImage.image = new Image(imagePath)
@@ -22,6 +23,7 @@ class EncounterController(
     if (encounterText != null) {
       encounterText.text = text
     }
+
 
     // Zoom out the image to original size
     val zoomOut = new ScaleTransition(Duration(2000), backgroundImage) {
@@ -35,12 +37,17 @@ class EncounterController(
     val fadeOut = new FadeTransition(Duration(2500), backgroundImage) {
       fromValue = 1.0
       toValue = 0.0
-      onFinished = _ => backgroundImage.getScene.getWindow.hide()
+      onFinished = _ => {
+        backgroundImage.getScene.getWindow.hide()
+      }
     }
 
     // Sequentially play the zoom out and fade out animations
     val sequence = new SequentialTransition {
       children = Seq(zoomOut, fadeOut)
+      onFinished = _ => {
+        backgroundImage.getScene.getWindow.hide()
+      }
     }
 
     sequence.play()

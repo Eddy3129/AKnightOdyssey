@@ -12,6 +12,9 @@ import javafx.{scene => jfxs}
 import scalafx.scene.layout.AnchorPane
 import scalafx.stage.{Modality, Stage, StageStyle}
 
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Promise}
+
 object MainApp extends JFXApp {
   private var mainStage: PrimaryStage = _
 
@@ -78,26 +81,25 @@ object MainApp extends JFXApp {
 
 
   // In MainApp object
-  def showLuckyWheel(gameLogic: GameLogic): String = {
+
+  def showLuckyWheel(gameLogic: GameLogic, onResult: String => Unit): Unit = {
     val resource = getClass.getResource("/aknightodyssey/view/LuckyWheel.fxml")
     val loader = new FXMLLoader(resource, NoDependencyResolver)
     loader.load()
     val root = loader.getRoot[javafx.scene.Parent]
     val controller = loader.getController[LuckyWheelController#Controller]
-
     controller.setGameLogic(gameLogic)
-
+    controller.setResultCallback { result: String =>
+      onResult(result)
+    }
     val stage = new Stage() {
       initModality(Modality.ApplicationModal)
+      initOwner(mainStage)
       initStyle(StageStyle.Undecorated)
       scene = new Scene(root)
     }
-    stage.showAndWait()
-
-    controller.getResult
+    stage.show()
   }
-
-
 
   showMainMenu()
 }

@@ -16,12 +16,18 @@ class Player(var position: Int) {
     debuffTurns = 3
   }
 
-  def hasPowerBoost: Boolean = powerBoost
+  def hasPowerBoost: Boolean = {
+    powerBoost
+  }
 
   def isDebuffed: Boolean = debuffTurns > 0
 
   def decrementDebuff(): Unit = {
     if (debuffTurns > 0) debuffTurns -= 1
+  }
+
+  def getDebuffTurns():Int = {
+    return debuffTurns
   }
 
   def resetPowerBoost(): Unit = {

@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
 
 .main_menu {
-    -fx-background-image: url('../images/GameMenuBackground.jpg');
+    -fx-background-image: url('../images/GameMenuBackground.png');
 }
 
 .gameplay{
@@ -24,4 +24,9 @@
 .pixelify-sans-small-text {
     -fx-font-family: "Pixelify Sans", sans-serif;
     -fx-font-size: 20px;
+}
+
+.pixelify-sans-large-text {
+    -fx-font-family: "Pixelify Sans", sans-serif;
+    -fx-font-size: 50px;
 }

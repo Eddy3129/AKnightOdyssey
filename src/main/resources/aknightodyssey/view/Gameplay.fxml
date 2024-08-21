@@ -75,27 +75,37 @@
                   <Image url="@../images/Knight_Avatar.png" />
                </image>
             </ImageView>
-            <Label alignment="CENTER" contentDisplay="CENTER" styleClass="pixelify-sans-text" text="You" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+            <Label fx:id="playerName" alignment="CENTER" contentDisplay="CENTER" styleClass="pixelify-sans-text" text="You" textAlignment="CENTER" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER">
                <font>
                   <Font name="System Bold" size="50.0" />
                </font>
             </Label>
-             <Rectangle fx:id="messageContainer" arcHeight="100.0" arcWidth="100.0" fill="#c5ccd1ec" height="201.0" opacity="0" stroke="BLACK" strokeType="INSIDE" strokeWidth="8.0" width="994.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+             <Rectangle fx:id="messageContainer" arcHeight="100.0" arcWidth="100.0" fill="#c5ccd1ec" height="121.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="8.0" width="994.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
                  <GridPane.margin>
-                     <Insets bottom="30.0" />
+                     <Insets bottom="100.0" />
                  </GridPane.margin>
              </Rectangle>
-             <Label fx:id="messageLabel" opacity="0" styleClass="pixelify-sans-text" stylesheets="@style.css" text="Label" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="9">
+             <Label fx:id="messageLabel" opacity="0.0" prefHeight="110.0" prefWidth="912.0" styleClass="pixelify-sans-text" stylesheets="@style.css" text="Label" wrapText="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="TOP">
                  <font>
                      <Font name="System Italic" size="40.0" />
                  </font>
-                 <padding>
-                     <Insets left="30.0" />
-                 </padding>
                <GridPane.margin>
-                  <Insets bottom="10.0" right="20.0" />
+                  <Insets right="70.0" top="50.0" />
                </GridPane.margin>
              </Label>
+            <Rectangle fx:id="messageContainer1" arcHeight="100.0" arcWidth="100.0" fill="#1881cded" height="121.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="8.0" width="994.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets top="175.0" />
+               </GridPane.margin>
+            </Rectangle>
+            <Label fx:id="effectLabel" opacity="0.0" prefHeight="106.0" prefWidth="909.0" styleClass="pixelify-sans-text" stylesheets="@style.css" text="Label" textFill="WHITE" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="9">
+               <font>
+                  <Font name="System Italic" size="40.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="40.0" top="175.0" />
+               </GridPane.margin>
+            </Label>
 
          </children>
          <BorderPane.margin>
