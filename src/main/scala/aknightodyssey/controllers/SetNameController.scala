@@ -1,5 +1,6 @@
 package aknightodyssey.controllers
 
+import aknightodyssey.game.Player
 import javafx.fxml.FXML
 import scalafx.event.ActionEvent
 import scalafx.scene.control.Alert.AlertType
@@ -14,16 +15,16 @@ class SetNameController (
                           @FXML private val submitButton: Button,
                           @FXML private val promptText: Text
                         ){
-  var playerName: String = ""
+  private var player: Player = _
 
-  private def storeName(): Boolean = {
+  private def createPlayer(): Boolean = {
     val name = textField.text.value.trim
     if (name.isEmpty) {
       showEmptyNameAlert()
       false
     } else {
-      playerName = name
-      println(s"Player's name is: $playerName")
+      player = new Player(1, name)
+      println(s"Player's name is: ${player.name}")
       true
     }
   }
@@ -38,8 +39,8 @@ class SetNameController (
   }
 
   def handleStart(action: ActionEvent): Unit = {
-    if (storeName()) {
-      aknightodyssey.MainApp.showGameplay(playerName)
+    if (createPlayer()) {
+      aknightodyssey.MainApp.showGameplay(player)
     }
   }
 }

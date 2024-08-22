@@ -1,7 +1,7 @@
 package aknightodyssey
 
 import aknightodyssey.controllers.{GameOverOverlayController, GameplayController, LuckyWheelController, SetNameController}
-import aknightodyssey.game.GameLogic
+import aknightodyssey.game.{GameLogic, Player}
 import aknightodyssey.util.Database
 import scalafxml.core.{FXMLLoader, NoDependencyResolver}
 import scalafx.Includes._
@@ -9,11 +9,8 @@ import scalafx.application.{JFXApp, Platform}
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
 import javafx.{scene => jfxs}
-import scalafx.scene.layout.AnchorPane
 import scalafx.stage.{Modality, Stage, StageStyle}
 
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, Promise}
 
 object MainApp extends JFXApp {
   private var mainStage: PrimaryStage = _
@@ -34,14 +31,15 @@ object MainApp extends JFXApp {
     mainStage.scene = new Scene(root)
   }
 
-  def showGameplay(playerName: String): Unit = {
-    val resource = getClass.getResource("view/Gameplay.fxml")
+  def showGameplay(player: Player): Unit = {
+    val resource = getClass.getResource("/aknightodyssey/view/Gameplay.fxml")
     val loader = new FXMLLoader(resource, NoDependencyResolver)
     loader.load()
     val root = loader.getRoot[jfxs.Parent]
     val controller = loader.getController[GameplayController#Controller]
-    controller.initializeGame(playerName) // Initialize the game
-    mainStage.scene = new Scene(root)
+
+    stage.scene = new Scene(root)
+    controller.initializeGame(player)
   }
 
   def showSetName(): Unit = {
@@ -79,8 +77,6 @@ object MainApp extends JFXApp {
     }
   }
 
-
-
   def showLuckyWheel(gameLogic: GameLogic, onResult: String => Unit): Unit = {
     val resource = getClass.getResource("/aknightodyssey/view/LuckyWheel.fxml")
     val loader = new FXMLLoader(resource, NoDependencyResolver)
@@ -99,6 +95,7 @@ object MainApp extends JFXApp {
     }
     stage.show()
   }
+
 
   showMainMenu()
 }

@@ -5,85 +5,70 @@ import scala.util.Random
 class GameLogic(val player: Player, val gameBoard: GameBoard) {
   private val random = new Random()
 
-  def rollDiceAndMove(): (Int, Int) = {
-    val maxRoll = if (player.isDebuffed) 3 else 6
+  def processMove(): (Int, Int, String, Option[(String, String, String)]) = {
+    val (roll, oldPosition) = rollDiceAndMove()
+    val tileType = getCurrentTileType
+    val message = s"Landed on ${tileType} tile at ${player.position}."
+    val encounterDetails = getPlayerTile.getEncounterDetails
+    (roll, oldPosition, message, encounterDetails)
+  }
+
+  def handleMonsterEncounterLogic(): String = {
+    if (player.hasSwordImmunity) {
+      player.resetSwordImmunity()
+      "You defeated the monster with your Mighty Gold Sword!"
+    } else {
+      movePlayerBack(5)
+    }
+  }
+  def applyTileEffects(): List[String] = {
+    val effects = List.newBuilder[String]
+    getPlayerTile match {
+      case _: PowerUpTile =>
+        effects += movePlayerForward(3)
+      case _ => // No effect for other tile types
+    }
+    effects.result()
+  }
+
+  def isGameOver: Boolean = player.position >= gameBoard.boardSize
+
+  def getCurrentPosition: Int = player.position
+
+  def getPlayerTile: Tile = gameBoard.getTileAt(player.position)
+
+  private def rollDiceAndMove(): (Int, Int) = {
+    val maxRoll = if (player.isStuckInMud) 3 else 6
     val roll = random.nextInt(maxRoll) + 1
     val oldPosition = player.position
     player.move(roll)
-    player.decrementDebuff()
+    player.decrementStuckInMudTurns()
     ensureValidPosition()
     (roll, oldPosition)
   }
 
-  def getCurrentPosition: Int = player.position
-
-  def isGameOver: Boolean = getCurrentPosition >= gameBoard.size
-
-  def getEncounterDetails: Option[(String, String, String)] = {
-    val details = getCurrentTile.getEncounterDetails
-    details
-  }
-
-  def getCurrentTile: Tile = {
-    val tile = gameBoard.getTileAt(player.position)
-    tile
-  }
-
-  def processMove(): (Int, Int, String, Option[(String, String, String)]) = {
-    val (roll, oldPosition) = rollDiceAndMove()
-    val positionAfterRoll = player.position
-    val tileType = getCurrentTileType
-    val message = s"Landed on ${tileType} tile at $positionAfterRoll."
-
-    val encounterDetails = getEncounterDetails
-    (roll, oldPosition, message, encounterDetails)
-  }
-
-  def handleMonsterEncounter(): String = {
-    if (player.hasPowerBoost) {
-      player.resetPowerBoost()
-      "You defeated the monster with your Mighty Gold Sword!"
-    } else {
-      val oldPosition = player.position
-      player.position = Math.max(1, player.position - 5)
-      val steps = oldPosition - player.position
-      s"Moving back $steps steps from $oldPosition to ${player.position}."
-    }
-  }
-
-  def applyTileEffects(): List[String] = {
-    val effects = List.newBuilder[String]
-    val currentTile = getCurrentTile
-
-    currentTile match {
-      case _: MonsterTile =>
-      // Monster effects are handled separately in handleMonsterEncounter()
-
-      case _: PowerUpTile =>
-        val oldPosition = player.position
-        player.position = Math.min(oldPosition + 3, gameBoard.size)
-        effects += s"Moving forward 3 steps from $oldPosition to ${player.position}."
-
-      case _: SpecialEncounterTile =>
-      // Handle special encounter logic if necessary
-
-      case _ =>
-      // Handle normal tile or any other tile types
-    }
-
+  private def movePlayerBack(steps: Int): String = {
+    val oldPosition = player.position
+    player.position = Math.max(1, player.position - steps)
     ensureValidPosition()
-    effects.result()
+    s"Moving back ${oldPosition - player.position} steps from $oldPosition to ${player.position}."
   }
 
+  private def movePlayerForward(steps: Int): String = {
+    val oldPosition = player.position
+    player.position = Math.min(oldPosition + steps, gameBoard.boardSize)
+    ensureValidPosition()
+    s"Moving forward $steps steps from $oldPosition to ${player.position}."
+  }
 
   private def ensureValidPosition(): Unit = {
-    if (player.position > gameBoard.size) {
-      player.position = gameBoard.size
+    if (player.position > gameBoard.boardSize) {
+      player.position = gameBoard.boardSize
     }
   }
 
   private def getCurrentTileType: String = {
-    getCurrentTile match {
+    getPlayerTile match {
       case _: MonsterTile => "Monster"
       case _: PowerUpTile => "Power-Up"
       case _: SpecialEncounterTile => "Special Encounter"

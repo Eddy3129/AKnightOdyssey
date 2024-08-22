@@ -18,7 +18,7 @@ object Leaderboard extends Database {
           turnCount int
         )
       """.execute.apply()
-    }L
+    }
   }
 
   def addScore(playerName: String, turnCount: Int): Unit = {

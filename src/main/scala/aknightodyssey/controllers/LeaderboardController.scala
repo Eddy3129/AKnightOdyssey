@@ -12,6 +12,10 @@ import scalafxml.core.macros.sfxml
 
 import scala.util.{Failure, Success}
 
+/**
+ * This controller is responsible for handling the leaderboard page, which involves accessing data from database, back button and delete records.
+ */
+
 @sfxml
 class LeaderboardController(
                              @FXML private val leaderboardTable: TableView[(String, Int)],

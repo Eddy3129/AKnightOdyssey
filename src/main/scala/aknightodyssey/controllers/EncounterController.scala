@@ -14,7 +14,7 @@ class EncounterController(
                            @FXML private val encounterText: Text
                          ) {
 
-  def initData(imagePath: String, text: String): Unit = {
+  def initialize(imagePath: String, text: String): Unit = {
     if (backgroundImage != null) {
       backgroundImage.image = new Image(imagePath)
       // Set the initial scale to zoomed in

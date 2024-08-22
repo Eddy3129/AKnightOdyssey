@@ -1,15 +1,14 @@
 package aknightodyssey.controllers
 
 import aknightodyssey.game.{GameBoard, GameLogic, MonsterTile, Player, PowerUpTile, SpecialEncounterTile}
-import aknightodyssey.{MainApp}
+import aknightodyssey.MainApp
 import aknightodyssey.model.Leaderboard
 import aknightodyssey.util.{EffectAnimation, MessageAnimation}
 import javafx.fxml.FXML
 import scalafx.application.Platform
 import scalafx.scene.Scene
 import scalafx.scene.control.{Button, Label}
-import scalafx.scene.layout.{GridPane, StackPane}
-import scalafx.scene.image.{Image, ImageView}
+import scalafx.scene.layout.GridPane
 import scalafx.stage.{Modality, Stage, StageStyle}
 import scalafxml.core.macros.sfxml
 import scalafxml.core.{FXMLLoader, NoDependencyResolver}
@@ -18,6 +17,10 @@ import scalafx.scene.shape.Rectangle
 import scalafx.util.Duration
 import scalafx.animation.{FadeTransition, KeyFrame, PauseTransition, Timeline}
 import scalafx.Includes._
+
+/**
+ * This controller is responsible for handling the gameplay fxml, which includes user interactions and UI updates during gameplay, and logic handling when game ends
+ */
 
 @sfxml
 class GameplayController(
@@ -29,23 +32,25 @@ class GameplayController(
                           @FXML private val gameBoard: GridPane
                         ) {
   private var gameLogic: GameLogic = _
-  private val boardSize:Int = 30
-  private val tileSize:Int = 75
-  private var playerToken: ImageView = _
+  private var gameboard: GameBoard = _
+  private val boardSize: Int = 30
+  private var player: Player = _
   private var turnCount: Int = 0
-  private var playerName: String = _
   private val messageAnimation: MessageAnimation = new MessageAnimation(messageLabel, 50)
   private val effectAnimation: EffectAnimation = new EffectAnimation(effectLabel, 50)
   private var luckyWheelSpunThisTurn: Boolean = false
 
-  def initializeGame(playerName: String): Unit = {
-    this.playerName = playerName
-    gameLogic = new GameLogic(new Player(1), new GameBoard())
-    createGameBoard()
-    createPlayerToken()
+  /*Initialize the game with the player object*/
+  def initializeGame(player: Player): Unit = {
+    this.player = player
+    this.gameboard = new GameBoard()
+    this.gameLogic = new GameLogic(player, gameboard)
+    gameboard.createGameBoardUI(gameBoard)
+    player.createPlayerToken()
     updatePlayerTokenPosition()
   }
 
+  /*Roll dice button handling*/
   def rollDice(): Unit = {
     turnCount += 1
     luckyWheelSpunThisTurn = false
@@ -54,38 +59,30 @@ class GameplayController(
     val movementMessage = s"Rolled $roll. Moving from $oldPosition to ${gameLogic.getCurrentPosition}."
 
     messageAnimation.play(List(movementMessage, tileMessage)) {
-      updatePlayerTokenPosition()
-
-      gameLogic.getCurrentTile match {
-        case _: MonsterTile =>
-          handleMonsterEncounter(encounterDetails)
-
-        case _: SpecialEncounterTile =>
-          encounterDetails.foreach { case (imagePath, musicPath, encounterText) =>
-            openEncounterWindow(imagePath, encounterText, musicPath, true, () => {
-              applyTileEffectsAndCheckGameOver()
-            })
-          }
-
-        case _ =>
-          encounterDetails match {
-            case Some((imagePath, musicPath, encounterText)) =>
-              openEncounterWindow(imagePath, encounterText, musicPath, false, () => {
-                applyTileEffectsAndCheckGameOver()
-              })
-            case None =>
-              applyTileEffectsAndCheckGameOver()
-          }
-      }
+      updateUIState()
+      handleTileEncounter(encounterDetails)
     }
   }
 
+  private def handleTileEncounter(encounterDetails: Option[(String, String, String)]): Unit = {
+    gameLogic.getPlayerTile match {
+      case _: MonsterTile => handleMonsterEncounter(encounterDetails)
+      case _: SpecialEncounterTile =>
+        encounterDetails.foreach { case (imagePath, musicPath, encounterText) =>
+          showEncounterAndContinue(imagePath, encounterText, musicPath, triggerLuckyWheel = true)
+        }
+      case _ =>
+        encounterDetails match {
+          case Some((imagePath, musicPath, encounterText)) =>
+            showEncounterAndContinue(imagePath, encounterText, musicPath)
+          case None => applyTileEffectsAndCheckGameOver()
+        }
+    }
+  }
 
+  /*explicitly handles monster encounter scenario*/
   private def handleMonsterEncounter(encounterDetails: Option[(String, String, String)]): Unit = {
-    // Check if the player has a power boost (sword)
-    val hasPowerBoost = gameLogic.player.hasPowerBoost
-
-    // Determine the correct image, sound, and text based on whether the player has a power boost
+    val hasPowerBoost = gameLogic.player.hasSwordImmunity
     val (imagePath, musicPath, encounterText) = if (hasPowerBoost) {
       ("/aknightodyssey/images/Gameplay-Monster-Encounter-PlayerBoost.png",
         "/aknightodyssey/sounds/Gameplay_Monster-Encounter-PlayerBoost.wav",
@@ -96,41 +93,49 @@ class GameplayController(
         "You have encountered the Goblin Monster"))
     }
 
-    // Handle the monster encounter logic
-    val monsterEffect = gameLogic.handleMonsterEncounter()
-
-    // Open the encounter window with the correct image, sound, and text
-    openEncounterWindow(imagePath, encounterText, musicPath, false, () => {
+    val monsterEffect = gameLogic.handleMonsterEncounterLogic()
+    showEncounter(imagePath, encounterText, musicPath, false, () => {
       effectAnimation.play(List(monsterEffect)) {
-        updatePlayerTokenPosition()
-        rollButton.disable = false
+        applyTileEffectsAndCheckGameOver()
       }
     })
   }
 
-  private def applyTileEffectsAndCheckGameOver(): Unit = {
-    val effects = gameLogic.applyTileEffects()
-
-    if (effects.nonEmpty) {
-      effectAnimation.play(effects) {
-        updatePlayerTokenPosition()
-        if (gameLogic.isGameOver) {
-          endGame()
-        } else {
-          rollButton.disable = false
-        }
-      }
-    } else {
-      updatePlayerTokenPosition()
-      if (gameLogic.isGameOver) {
-        endGame()
-      } else {
-        rollButton.disable = false
-      }
-    }
+  private def showEncounterAndContinue(imagePath: String, text: String, musicPath: String,
+                                       triggerLuckyWheel: Boolean = false,
+                                       onClose: () => Unit = () => applyTileEffectsAndCheckGameOver()): Unit = {
+    showEncounter(imagePath, text, musicPath, triggerLuckyWheel, onClose)
   }
 
-  def openEncounterWindow(imagePath: String, text: String, musicPath: String, triggerLuckyWheel: Boolean, onClose: () => Unit, isVictoryScreen: Boolean = false): Unit = {
+  /*After every move, call this function to apply tile effects and check if game is over*/
+  private def applyTileEffectsAndCheckGameOver(): Unit = {
+    val effects = gameLogic.applyTileEffects()
+    def continueGame(): Unit = {
+      updateUIState()
+      if (gameLogic.isGameOver) endGame() else rollButton.disable = false
+    }
+
+    if (effects.nonEmpty) effectAnimation.play(effects)(continueGame())
+    else continueGame()
+  }
+
+  private def updateUIState(): Unit = {
+    positionLabel.text = s"Current Position: ${gameLogic.getCurrentPosition}"
+    player.updatePlayerTokenPosition(gameBoard, boardSize)
+  }
+
+
+  /**
+   * Opens an encounter window with the specified details.
+   *
+   * @param imagePath Image path for the encounter
+   * @param text Text to display in the encounter window
+   * @param musicPath Path to the music file for the encounter
+   * @param triggerLuckyWheel Whether to trigger the lucky wheel after the encounter
+   * @param onClose Callback function to execute when the encounter window is closed
+   * @param isVictoryScreen Whether this is the victory screen
+   */
+  def showEncounter(imagePath: String, text: String, musicPath: String, triggerLuckyWheel: Boolean, onClose: () => Unit, isVictoryScreen: Boolean = false): Unit = {
     val resource = getClass.getResource("/aknightodyssey/view/Encounter.fxml")
     val loader = new FXMLLoader(resource, NoDependencyResolver)
     loader.load()
@@ -172,32 +177,30 @@ class GameplayController(
       }
     }
 
-    controller.initData(imagePath, text)
+    controller.initialize(imagePath, text)
     stage.show()
   }
 
+  /*Method to display lucky wheel*/
   private def showLuckyWheel(onClose: () => Unit): Unit = {
     if (!luckyWheelSpunThisTurn) {
       luckyWheelSpunThisTurn = true
-      rollButton.disable = true // Ensure the roll button is disabled
+      rollButton.disable = true
       MainApp.showLuckyWheel(gameLogic, result => {
-        println(s"Lucky Wheel result: $result")
-
         val effectMessage = result match {
           case "Sword" =>
-            gameLogic.player.applyPowerBoost()
+            gameLogic.player.applySwordImmunity()
             "You gained immunity against the next monster attack!"
           case "Mud" =>
-            gameLogic.player.applyDebuff()
+            gameLogic.player.applyMud()
             "You are stuck in mud! You can only roll up to 3 for the next 3 turns."
           case _ => "Unknown effect"
         }
 
-        // Use PauseTransition to add a slight delay before showing the effect message
         new PauseTransition(Duration(500)) {
           onFinished = _ => {
             effectAnimation.play(List(effectMessage)) {
-              rollButton.disable = false // Enable the button after effects
+              rollButton.disable = false
               onClose()
             }
           }
@@ -205,100 +208,38 @@ class GameplayController(
       })
     } else {
       println("Lucky Wheel already spun this turn")
-      rollButton.disable = false // Enable the button if Lucky Wheel is not shown
+      rollButton.disable = false
       onClose()
     }
   }
 
-
-  private def createGameBoard(): Unit = {
-    val stoneTileImage = new Image("aknightodyssey/images/Gameplay-Tile-Block.png")
-    val monsterIcon = new Image("aknightodyssey/images/Gameplay-Monster-Icon.jpeg")
-    val powerUpIcon = new Image("aknightodyssey/images/Gameplay-Power-Up-Icon.jpeg")
-    val specialEncounterIcon = new Image("aknightodyssey/images/Gameplay-Special-Icon.jpeg")
-    val trophyIcon = new Image("aknightodyssey/images/Gameplay-Trophy-Icon.jpeg")  // Add this line
-
-    for (i <- 0 until boardSize) {
-      val tile = gameLogic.gameBoard.getTileAt(i + 1)
-
-      val tileIcon = if (i == boardSize - 1) {
-        new ImageView(trophyIcon)  // Use trophy icon for the last tile
-      } else {
-        tile match {
-          case _: MonsterTile => new ImageView(monsterIcon)
-          case _: PowerUpTile => new ImageView(powerUpIcon)
-          case _: SpecialEncounterTile => new ImageView(specialEncounterIcon)
-          case _ => null
-        }
-      }
-
-      if (tileIcon != null) {
-        tileIcon.fitWidth = tileSize
-        tileIcon.fitHeight = tileSize
-      }
-
-      val tilePane = new StackPane {
-        children = List(
-          new ImageView(stoneTileImage) {
-            fitWidth = tileSize
-            fitHeight = tileSize
-          },
-          new Label((i + 1).toString) {
-            style = "-fx-font-size: 40px; -fx-text-fill: white; -fx-font-weight: bold;"
-          }
-        ) ++ Option(tileIcon).toList
-      }
-
-      val row = 4 - (i / 6)
-      val col = if (row % 2 == 0) i % 6 else 5 - (i % 6)
-
-      gameBoard.add(tilePane, col, row)
-    }
-  }
-
-  private def createPlayerToken(): Unit = {
-    playerToken = new ImageView(new Image("aknightodyssey/images/Gameplay-Player-Token.png")) {
-      fitWidth = 150
-      fitHeight = 150
-    }
-    updatePlayerTokenPosition()
-  }
-
+  /*Updates player token position*/
   private def updatePlayerTokenPosition(): Unit = {
     positionLabel.text = s"Current Position: ${gameLogic.getCurrentPosition}"
-    println(s"Updating player token position to ${gameLogic.getCurrentPosition}")
-    val position = Math.min(gameLogic.getCurrentPosition - 1, boardSize - 1)
-    if (position >= 0 && position < boardSize) {
-      val row = 4 - (position / 6)
-      val col = if (row % 2 == 0) position % 6 else 5 - (position % 6)
-
-      playerToken.scaleX = if (row % 2 == 0) 1 else -1
-      gameBoard.children.removeAll(playerToken)
-      gameBoard.add(playerToken, col, row)
-    } else {
-      println(s"Invalid position: $position")
-    }
+    player.updatePlayerTokenPosition(gameBoard, boardSize)
   }
 
+  /*End game handling mechanisms*/
   private def endGame(): Unit = {
     rollButton.disable = true
     savePlayerScore()
 
-    openEncounterWindow(
+    showEncounter(
       "/aknightodyssey/images/Gameplay-Victory-Endscreen.png",
-      s"Congratulations, $playerName! You've completed your journey in $turnCount turns.",
+      s"Congratulations, ${player.name}! You've completed your journey in $turnCount turns.",
       "/aknightodyssey/sounds/Gameplay-Endscreen-BGM.wav",
       false,
       () => {
         Platform.runLater {
-          aknightodyssey.MainApp.showGameOverlay(playerName, turnCount)
+          aknightodyssey.MainApp.showGameOverlay(player.name, turnCount)
         }
       },
       isVictoryScreen = true
     )
   }
 
+  /*Save player score to leaderboard*/
   private def savePlayerScore(): Unit = {
-    Leaderboard.addScore(playerName, turnCount)
+    Leaderboard.addScore(player.name, turnCount)
   }
 }

@@ -166,6 +166,12 @@ label {
     -fx-background-color: rgba(255, 215, 0, 0.4);
 }
 
+.table-row-cell:filled:selected,
+.table-row-cell:filled:selected:odd {
+    -fx-background-color: #FFD700;
+    -fx-text-fill: #000000;
+}
+
 /* Unfilled Rows */
 .table-row-cell:empty {
     -fx-background-color: rgba(50, 50, 50, 0.7);

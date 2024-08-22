@@ -5,13 +5,13 @@ import scalafx.scene.control.Label
 import scalafx.scene.media.AudioClip
 import scalafx.util.Duration
 
-abstract class LabelAnimation[T <: Label](protected val label: T, protected val duration: Int) {
+abstract class LabelAnimation[T <: Label](val label: T, val duration: Int) {
 
   def play(texts: List[String])(onFinish: => Unit): Unit = {
     animateTexts(texts, onFinish)
   }
 
-  protected def animateTexts(texts: List[String], onFinish: => Unit): Unit = {
+  def animateTexts(texts: List[String], onFinish: => Unit): Unit = {
     label.text = ""
     label.visible = true
     label.opacity = 1.0
@@ -53,7 +53,7 @@ abstract class LabelAnimation[T <: Label](protected val label: T, protected val 
     animateNextText(texts)
   }
 
-  protected def fadeOutLabel(onFinish: => Unit): Unit = {
+  private def fadeOutLabel(onFinish: => Unit): Unit = {
     val fadeOutTransition = new FadeTransition(Duration(3000), label) {
       fromValue = 1.0
       toValue = 0.5

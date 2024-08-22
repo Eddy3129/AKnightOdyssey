@@ -19,7 +19,8 @@ class LuckyWheelController(
                           ) {
   private var gameLogic: GameLogic = _
   private var resultCallback: String => Unit = _
-  private var spinCompleted: Boolean = false
+  private val random = new Random()
+  private val segments = List("Sword", "Mud", "Sword", "Mud", "Sword", "Mud", "Sword", "Mud")
 
   def initialize(): Unit = {
     spinButton.onAction = _ => spinWheel()
@@ -34,47 +35,39 @@ class LuckyWheelController(
   }
 
   def spinWheel(): Unit = {
-    if (!spinCompleted) {
-      spinButton.disable = true
-      spinMessage.text = "Spinning..."
-      val random = new Random()
-      val finalAngle = random.nextInt(360)
-      val totalRotations = 360 * 10 + finalAngle
-      val rotateTransition = new RotateTransition {
-        node = luckyWheel
-        duration = Duration(4000)
-        byAngle = totalRotations
-        interpolator = Interpolator.EaseOut
-        onFinished = _ => {
-          val result = determineResult(finalAngle)
-          spinMessage.text = s"You landed on: $result"
-          spinCompleted = true
-          applyResultAndClose(result)
+    spinButton.disable = true
+    spinMessage.text = "Spinning..."
+    val finalAngle = random.nextInt(360)
+    val totalRotations = 360 * 10 + finalAngle
+
+    new RotateTransition {
+      node = luckyWheel
+      duration = Duration(4000)
+      byAngle = totalRotations
+      interpolator = Interpolator.EaseOut
+      onFinished = _ => handleSpinResult(finalAngle)
+    }.play()
+  }
+
+  private def handleSpinResult(finalAngle: Double): Unit = {
+    val result = determineResult(finalAngle)
+    spinMessage.text = s"You landed on: $result"
+
+    new Timeline {
+      keyFrames = Seq(KeyFrame(Duration(1000), onFinished = _ => {
+        Platform.runLater {
+          resultCallback(result)
+          closeWindow()
         }
-      }
-      rotateTransition.play()
-    }
+      }))
+    }.play()
   }
 
   private def determineResult(angle: Double): String = {
     val normalizedAngle = ((angle % 360) + 360) % 360
     val adjustedAngle = (normalizedAngle + 22.5) % 360
     val segmentIndex = (adjustedAngle / 45).toInt
-    val segments = List("Sword", "Mud", "Sword", "Mud", "Sword", "Mud", "Sword", "Mud")
     segments(segmentIndex)
-  }
-
-  private def applyResultAndClose(result: String): Unit = {
-    new Timeline {
-      keyFrames = Seq(KeyFrame(Duration(2000), onFinished = _ => {
-        Platform.runLater {
-          if (resultCallback != null) {
-            resultCallback(result)
-          }
-          closeWindow()
-        }
-      }))
-    }.play()
   }
 
   private def closeWindow(): Unit = {
