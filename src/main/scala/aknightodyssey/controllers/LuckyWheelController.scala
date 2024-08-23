@@ -29,11 +29,12 @@ class LuckyWheelController(
   def setGameLogic(gl: GameLogic): Unit = {
     gameLogic = gl
   }
-
+  //Callback function to return spin result
   def setResultCallback(callback: String => Unit): Unit = {
     resultCallback = callback
   }
 
+  //Handle the spin button and spin animation
   def spinWheel(): Unit = {
     spinButton.disable = true
     spinMessage.text = "Spinning..."
@@ -44,11 +45,13 @@ class LuckyWheelController(
       node = luckyWheel
       duration = Duration(4000)
       byAngle = totalRotations
+      //gradually slow down spin until stopped
       interpolator = Interpolator.EaseOut
       onFinished = _ => handleSpinResult(finalAngle)
     }.play()
   }
 
+  //Return the result after spin
   private def handleSpinResult(finalAngle: Double): Unit = {
     val result = determineResult(finalAngle)
     spinMessage.text = s"You landed on: $result"
@@ -63,13 +66,18 @@ class LuckyWheelController(
     }.play()
   }
 
+  //Determine result based on final angle of spin
   private def determineResult(angle: Double): String = {
+    //normalize angle to range between [0,360)
     val normalizedAngle = ((angle % 360) + 360) % 360
+    //adjust offset as first segment is between [-22.5,22.5]
     val adjustedAngle = (normalizedAngle + 22.5) % 360
+    //determine index of segment as 360/8 = 45
     val segmentIndex = (adjustedAngle / 45).toInt
     segments(segmentIndex)
   }
 
+  //close window
   private def closeWindow(): Unit = {
     Option(spinButton.scene().getWindow).foreach(_.hide())
   }

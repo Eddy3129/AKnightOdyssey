@@ -26,7 +26,7 @@ class GameBoard(val boardSize: Int = 30) {
       val endIndex = if (row == numRows - 1) boardSize - 1 else startIndex + rowSize // -1 to not include the last tile
 
       // Determine number of special tiles for this row (2 or 3)
-      val numSpecialTiles = random.nextInt(2) + 2 // 2 or 3
+      val numSpecialTiles = math.min(random.nextInt(3) + 2, endIndex - startIndex) // 2 or 3
 
       // Create a list of indices for this row and shuffle it
       val indices = random.shuffle((startIndex until endIndex).toList)
@@ -51,10 +51,12 @@ class GameBoard(val boardSize: Int = 30) {
     board
   }
 
+  // Retrieve position of tile
   def getTileAt(position: Int): Tile = {
     if (position >= 1 && position <= boardSize) tiles(position) else new NormalTile
   }
 
+  // Create UI for gameboard
   def createGameBoardUI(gameBoard: GridPane): Unit = {
     val tileSize: Int = 75
     val stoneTileImage = new Image("aknightodyssey/images/Gameplay-Tile-Block.png")
@@ -67,8 +69,10 @@ class GameBoard(val boardSize: Int = 30) {
       val tile = getTileAt(i + 1)
 
       val tileIcon = if (i == boardSize - 1) {
+        //final tile is a trophy icon
         new ImageView(trophyIcon)
       } else {
+        //different icon based on tile type
         tile match {
           case _: MonsterTile => new ImageView(monsterIcon)
           case _: PowerUpTile => new ImageView(powerUpIcon)

@@ -45,10 +45,12 @@ class GameplayController(
     this.player = player
     this.gameboard = new GameBoard()
     this.gameLogic = new GameLogic(player, gameboard)
+    gameBoard.getChildren.clear()
     gameboard.createGameBoardUI(gameBoard)
     player.createPlayerToken()
     updatePlayerTokenPosition()
   }
+
 
   /*Roll dice button handling*/
   def rollDice(): Unit = {
@@ -64,6 +66,7 @@ class GameplayController(
     }
   }
 
+  /*Handle Encounter based on tile types*/
   private def handleTileEncounter(encounterDetails: Option[(String, String, String)]): Unit = {
     gameLogic.getPlayerTile match {
       case _: MonsterTile => handleMonsterEncounter(encounterDetails)
@@ -82,18 +85,17 @@ class GameplayController(
 
   /*explicitly handles monster encounter scenario*/
   private def handleMonsterEncounter(encounterDetails: Option[(String, String, String)]): Unit = {
-    val hasPowerBoost = gameLogic.player.hasSwordImmunity
-    val (imagePath, musicPath, encounterText) = if (hasPowerBoost) {
-      ("/aknightodyssey/images/Gameplay-Monster-Encounter-PlayerBoost.png",
-        "/aknightodyssey/sounds/Gameplay_Monster-Encounter-PlayerBoost.wav",
-        "You have defeated the Goblin with the Mighty Gold Sword!")
+    val monsterEffect = gameLogic.handleMonsterEncounterLogic()
+    val (imagePath, musicPath, encounterText) = if (monsterEffect.contains("defeated")) {
+      ("/aknightodyssey/images/Gameplay-Monster-Encounter-SwordImmunity.png",
+        "/aknightodyssey/sounds/Gameplay_Monster-Encounter-SwordImmunity.wav",
+        "You defeated the Goblin with your Mighty Gold Sword!")
     } else {
       encounterDetails.getOrElse(("/aknightodyssey/images/Gameplay-Monster-Encounter.jpg",
         "/aknightodyssey/sounds/Gameplay-Monster-Encounter.wav",
-        "You have encountered the Goblin Monster"))
+        "Run! You have encountered the Goblin Monster!"))
     }
 
-    val monsterEffect = gameLogic.handleMonsterEncounterLogic()
     showEncounter(imagePath, encounterText, musicPath, false, () => {
       effectAnimation.play(List(monsterEffect)) {
         applyTileEffectsAndCheckGameOver()
@@ -101,6 +103,7 @@ class GameplayController(
     })
   }
 
+  /*After showing encounter, call applyTileEffectsAndCheckGameOver()*/
   private def showEncounterAndContinue(imagePath: String, text: String, musicPath: String,
                                        triggerLuckyWheel: Boolean = false,
                                        onClose: () => Unit = () => applyTileEffectsAndCheckGameOver()): Unit = {
@@ -119,6 +122,7 @@ class GameplayController(
     else continueGame()
   }
 
+  /*Update player token position after every move*/
   private def updateUIState(): Unit = {
     positionLabel.text = s"Current Position: ${gameLogic.getCurrentPosition}"
     player.updatePlayerTokenPosition(gameBoard, boardSize)

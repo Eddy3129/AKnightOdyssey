@@ -1,7 +1,7 @@
 package aknightodyssey
 
 import aknightodyssey.controllers.{GameOverOverlayController, GameplayController, LuckyWheelController, SetNameController}
-import aknightodyssey.game.{GameLogic, Player}
+import aknightodyssey.game.{GameBoard, GameLogic, Player}
 import aknightodyssey.util.Database
 import scalafxml.core.{FXMLLoader, NoDependencyResolver}
 import scalafx.Includes._
@@ -23,6 +23,7 @@ object MainApp extends JFXApp {
   }
   mainStage = stage
 
+    //Display game homepage
   def showMainMenu(): Unit = {
     val resource = getClass.getResource("view/GameHomePage.fxml")
     val loader = new FXMLLoader(resource, NoDependencyResolver)
@@ -31,6 +32,7 @@ object MainApp extends JFXApp {
     mainStage.scene = new Scene(root)
   }
 
+  //Display gameplay interface
   def showGameplay(player: Player): Unit = {
     val resource = getClass.getResource("/aknightodyssey/view/Gameplay.fxml")
     val loader = new FXMLLoader(resource, NoDependencyResolver)
@@ -42,6 +44,7 @@ object MainApp extends JFXApp {
     controller.initializeGame(player)
   }
 
+  //Display Set Name page
   def showSetName(): Unit = {
     val resource = getClass.getResource("view/SetName.fxml")
     val loader = new FXMLLoader(resource, NoDependencyResolver)
@@ -50,6 +53,7 @@ object MainApp extends JFXApp {
     mainStage.scene = new Scene(root)
   }
 
+  //Display Leaderboard
   def showLeaderboard(): Unit = {
     val resource = getClass.getResource("view/Leaderboard.fxml")
     val loader = new FXMLLoader(resource, NoDependencyResolver)
@@ -58,6 +62,7 @@ object MainApp extends JFXApp {
     mainStage.scene = new Scene(root)
   }
 
+  //Display Game Over Overlay after game end
   def showGameOverlay(playerName: String, turnCount: Int): Unit = {
     Platform.runLater {
       val resource = getClass.getResource("view/GameOverOverlay.fxml")
@@ -77,6 +82,7 @@ object MainApp extends JFXApp {
     }
   }
 
+  //Display Lucky Wheel
   def showLuckyWheel(gameLogic: GameLogic, onResult: String => Unit): Unit = {
     val resource = getClass.getResource("/aknightodyssey/view/LuckyWheel.fxml")
     val loader = new FXMLLoader(resource, NoDependencyResolver)
@@ -96,6 +102,6 @@ object MainApp extends JFXApp {
     stage.show()
   }
 
-
+  //Show main menu when starting the game
   showMainMenu()
 }

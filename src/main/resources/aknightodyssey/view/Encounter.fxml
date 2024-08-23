@@ -10,7 +10,7 @@
    <children>
       <ImageView fx:id="backgroundImage" fitHeight="1080.0" fitWidth="1920.0" layoutX="10.0" layoutY="-4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <Rectangle arcHeight="100.0" arcWidth="100.0" fill="#ebe0e0" height="130.0" layoutX="62.0" layoutY="744.0" stroke="#b9b9b9" strokeType="INSIDE" strokeWidth="5.0" width="1800.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="60.0" />
-      <Text fx:id="encounterText" layoutX="94.0" layoutY="981.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="gameText-large" text="Text" wrappingWidth="1662.236328125">
+      <Text fx:id="encounterText" layoutX="98.0" layoutY="980.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="gameText-normal" text="Text" wrappingWidth="1769.236328125">
          <font>
             <Font size="50.0" />
          </font>

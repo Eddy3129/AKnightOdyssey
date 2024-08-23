@@ -31,14 +31,17 @@ class LeaderboardController(
     scalafx.beans.property.ObjectProperty(cellData.value._2)
   }
 
+  /*Refresh leaderboard to ensure retrieval of updated records*/
   def refreshLeaderboard(): Unit = {
     leaderboardTable.items = Leaderboard.getScores
   }
 
+  /*Handling back button*/
   def handleBack(event: MouseEvent): Unit = {
     MainApp.showMainMenu()
   }
 
+  /*Handling deletion of records*/
   def handleDelete(action: ActionEvent): Unit = {
     val selectedIndex = leaderboardTable.selectionModel().selectedIndex.value
     if (selectedIndex >= 0) {

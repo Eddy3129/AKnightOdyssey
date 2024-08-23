@@ -8,6 +8,10 @@ import scalafx.animation._
 import scalafx.util.Duration
 import scalafx.Includes._
 
+/**
+ * This controller is responsible for handling the encounter fxml, and animation when displaying the window
+ */
+
 @sfxml
 class EncounterController(
                            @FXML private val backgroundImage: ImageView,
